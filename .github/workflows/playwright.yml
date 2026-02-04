@@ -30,9 +30,12 @@ jobs:
         env:
           CI: true
 
-      - name: Upload test results
+      - name: Prepare reports folder
+        run: mkdir -p reports
+
+      - name: Upload Cucumber HTML report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cucumber-report
-          path: reports
+          name: cucumber-html-report
+          path: reports/*.html
