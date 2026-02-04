@@ -5,7 +5,12 @@ let browser: Browser;
 let page: Page;
 
 Given('a web browser is at the SauceLabs login page', async function () {
-  browser = await chromium.launch({ headless: false });
+  const isCI = process.env.CI === 'true';
+
+  browser = await chromium.launch({
+    headless: isCI
+  });
+
   page = await browser.newPage();
   await page.goto('https://www.saucedemo.com/');
 });
@@ -27,5 +32,6 @@ Then('the URL should contain the inventory subdirectory', async function () {
 });
 
 After(async function () {
+  if (page) await page.close();
   if (browser) await browser.close();
 });
