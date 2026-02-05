@@ -30,9 +30,15 @@ jobs:
         env:
           CI: true
 
-      - name: Upload Cucumber HTML report
+      - name: Copy Cucumber HTML report to GitHub Pages folder
+        if: always()
+        run: |
+          mkdir -p docs
+          cp reports/cucumber-report.html docs/
+
+      - name: Upload Cucumber HTML report as artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cucumber-report
-          path: reports/
+          path: reports/cucumber-report.html
