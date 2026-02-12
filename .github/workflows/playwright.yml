@@ -1,4 +1,4 @@
-name: Playwright Cucumber CI
+name: Playwright + Cucumber CI
 
 on:
   push:
@@ -25,20 +25,39 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      # -----------------------------
+      # Run Cucumber tests
+      # -----------------------------
       - name: Run Cucumber tests
         run: npm run cucumber
         env:
           CI: true
 
-      - name: Copy Cucumber HTML report to GitHub Pages folder
+      # -----------------------------
+      # Run Playwright API tests
+      # -----------------------------
+      - name: Run Playwright API tests
+        run: npx playwright test src/tests/api --reporter=html
+        env:
+          CI: true
+
+      # -----------------------------
+      # Combine reports
+      # -----------------------------
+      - name: Combine HTML reports
         if: always()
         run: |
           mkdir -p docs
-          cp reports/cucumber-report.html docs/
+          # Copier rapport Cucumber
+          cp reports/cucumber-report.html docs/cucumber-report.html
+          # Copier rapport Playwright
+          cp -r playwright-report/* docs/
+          # Optionnel : renommer index.html principal pour Playwright
+          mv docs/index.html docs/playwright-report.html
 
-      - name: Upload Cucumber HTML report as artifact
+      - name: Upload combined HTML report as artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cucumber-report
-          path: reports/cucumber-report.html
+          name: combined-html-report
+          path: docs/
