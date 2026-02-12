@@ -11,19 +11,65 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # -----------------------------
+      # Checkout frontend/test repo
+      # -----------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # -----------------------------
+      # Checkout Spring Boot backend
+      # -----------------------------
+      - name: Checkout backend
+        uses: actions/checkout@v4
+        with:
+          repository: NoureddineTaher/Gestion_Pharmacie
+          path: backend
+
+      # -----------------------------
+      # Setup Node.js
+      # -----------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: Install dependencies
+      # -----------------------------
+      # Install dependencies
+      # -----------------------------
+      - name: Install frontend dependencies
         run: npm ci
 
+      # -----------------------------
+      # Install Playwright browsers
+      # -----------------------------
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
+
+      # -----------------------------
+      # Build Spring Boot backend
+      # -----------------------------
+      - name: Build Spring Boot backend
+        run: |
+          cd backend/BE
+          ./mvnw clean package -DskipTests
+
+      # -----------------------------
+      # Start Spring Boot backend
+      # -----------------------------
+      - name: Start Spring Boot backend
+        run: |
+          cd backend/BE
+          nohup ./mvnw spring-boot:run &
+          echo "Waiting for backend to be ready..."
+          # Vérifie toutes les 5 secondes si le backend répond
+          for i in {1..12}; do
+            if curl -s http://localhost:8081/actuator/health | grep UP; then
+              echo "Backend ready!"
+              break
+            fi
+            sleep 5
+          done
 
       # -----------------------------
       # Run Cucumber tests
@@ -42,7 +88,7 @@ jobs:
           CI: true
 
       # -----------------------------
-      # Combine reports
+      # Combine HTML reports
       # -----------------------------
       - name: Combine HTML reports
         if: always()
@@ -55,7 +101,10 @@ jobs:
           # Optionnel : renommer index.html principal pour Playwright
           mv docs/index.html docs/playwright-report.html
 
-      - name: Upload combined HTML report as artifact
+      # -----------------------------
+      # Upload combined HTML report as artifact
+      # -----------------------------
+      - name: Upload combined HTML report
         if: always()
         uses: actions/upload-artifact@v4
         with:
