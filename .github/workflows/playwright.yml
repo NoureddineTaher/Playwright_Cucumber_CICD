@@ -1,4 +1,4 @@
-name: Playwright + Cucumber CI
+name: Playwright Cucumber CI
 
 on:
   push:
@@ -11,102 +11,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # -----------------------------
-      # Checkout frontend/test repo
-      # -----------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # -----------------------------
-      # Checkout Spring Boot backend
-      # -----------------------------
-      - name: Checkout backend
-        uses: actions/checkout@v4
-        with:
-          repository: NoureddineTaher/Gestion_Pharmacie
-          path: backend
-
-      # -----------------------------
-      # Setup Node.js
-      # -----------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      # -----------------------------
-      # Install dependencies
-      # -----------------------------
-      - name: Install frontend dependencies
+      - name: Install dependencies
         run: npm ci
 
-      # -----------------------------
-      # Install Playwright browsers
-      # -----------------------------
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      # -----------------------------
-      # Build Spring Boot backend
-      # -----------------------------
-      - name: Build Spring Boot backend
-        run: |
-          cd backend/BE
-          ./mvnw clean package -DskipTests
-
-      # -----------------------------
-      # Start Spring Boot backend
-      # -----------------------------
-      - name: Start Spring Boot backend
-        run: |
-          cd backend/BE
-          nohup ./mvnw spring-boot:run &
-          echo "Waiting for backend to be ready..."
-          # Vérifie toutes les 5 secondes si le backend répond
-          for i in {1..12}; do
-            if curl -s http://localhost:8081/actuator/health | grep UP; then
-              echo "Backend ready!"
-              break
-            fi
-            sleep 5
-          done
-
-      # -----------------------------
-      # Run Cucumber tests
-      # -----------------------------
       - name: Run Cucumber tests
         run: npm run cucumber
         env:
           CI: true
 
-      # -----------------------------
-      # Run Playwright API tests
-      # -----------------------------
-      - name: Run Playwright API tests
-        run: npx playwright test src/tests/api --reporter=html
-        env:
-          CI: true
-
-      # -----------------------------
-      # Combine HTML reports
-      # -----------------------------
-      - name: Combine HTML reports
+      - name: Copy Cucumber HTML report to GitHub Pages folder
         if: always()
         run: |
           mkdir -p docs
-          # Copier rapport Cucumber
-          cp reports/cucumber-report.html docs/cucumber-report.html
-          # Copier rapport Playwright
-          cp -r playwright-report/* docs/
-          # Optionnel : renommer index.html principal pour Playwright
-          mv docs/index.html docs/playwright-report.html
+          cp reports/cucumber-report.html docs/
 
-      # -----------------------------
-      # Upload combined HTML report as artifact
-      # -----------------------------
-      - name: Upload combined HTML report
+      - name: Upload Cucumber HTML report as artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: combined-html-report
-          path: docs/
+          name: cucumber-report
+          path: reports/cucumber-report.html
