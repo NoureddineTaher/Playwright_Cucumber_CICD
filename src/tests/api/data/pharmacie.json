@@ -1,0 +1,17 @@
+[{
+  
+  "dateFrom": "01/03/2026",
+  "dateTo": "05/03/2026",
+  "lieu": "Sartrouville",
+  "pharmacieName": "Ntaher",
+  "adress2": "2 rue suger",
+  "tel": "0745313152"
+},
+ {
+        "dateFrom": "02/03/2026",
+        "dateTo": "06/03/2026",
+        "lieu": "Paris",
+        "pharmacieName": "Ntaher Modifiée",
+        "adress2": "10 rue Nouvelle",
+        "tel": "23784755"
+      }]

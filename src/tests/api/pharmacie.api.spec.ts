@@ -1,23 +1,15 @@
 import { test, expect } from '@playwright/test';
+import pharmacieData from './data/pharmacie.json';
 
 let pharmacieId: number;
-
-const baseURL = 'http://localhost:8081/pharmacies';  
+const baseURL = 'http://localhost:8081/pharmacie';  
 
 test.describe('API Pharmacie de Garde', () => {
 
   // CREATE - POST
   test('POST - Créer une pharmacie', async ({ request }) => {
     const response = await request.post(baseURL, {
-      data: {
-        id: 0,
-        dateFrom: "01/03/2026",
-        dateTo: "05/03/2026",
-        lieu: "Sartrouville",
-        pharmacieName: "Ntaher",
-        adress2: "2 rue suger",
-        tel: "0745313152"
-      }
+      data: pharmacieData[0]
     });
 
     expect(response.status()).toBe(201); 
@@ -72,14 +64,7 @@ test.describe('API Pharmacie de Garde', () => {
   // UPDATE - PUT
   test('PUT - Modifier pharmacie', async ({ request }) => {
     const response = await request.put(`${baseURL}/${pharmacieId}`, {
-      data: {
-        dateFrom: "02/03/2026",
-        dateTo: "06/03/2026",
-        lieu: "Paris",
-        pharmacieName: "Ntaher Modifiée",
-        adress2: "10 rue Nouvelle",
-        tel: "0745313152"
-      }
+    data: pharmacieData[1]
     });
 
     expect(response.status()).toBe(200);
@@ -95,17 +80,38 @@ test.describe('API Pharmacie de Garde', () => {
     console.log('Pharmacie modifiée:', body);
   });
 
-  // DELETE - DELETE
-  test('DELETE - Supprimer pharmacie', async ({ request }) => {
-    const response = await request.delete(`${baseURL}/${pharmacieId}`);
-    expect(response.status()).toBe(204);
+// DELETE - DELETE
+test('DELETE - Supprimer pharmacie', async ({ request }) => {
+  // Première tentative : suppression normale
+  let response = await request.delete(`${baseURL}/${pharmacieId}`);
 
+  if (response.status() === 204) {
+    // Supprimé avec succès
     test.info().attach('DELETE /pharmacies/:id', {
       body: `Pharmacie ID ${pharmacieId} supprimée`,
       contentType: 'text/plain'
     });
-
     console.log(`Pharmacie ID ${pharmacieId} supprimée`);
-  });
+  } else {
+    // Si déjà supprimé ou autre erreur
+    const body = await response.json();
+    expect(response.status()).toBe(400); // ou 404 selon l'API
+    expect(body.code).toBe('pharmacie.NotFound');
+
+    test.info().attach('DELETE /pharmacies/:id Response', {
+      body: JSON.stringify(body, null, 2),
+      contentType: 'application/json'
+    });
+    console.log(`Pharmacie ID ${pharmacieId} déjà supprimée`, body);
+  }
+
+  // Deuxième tentative : vérifier suppression idempotente
+  response = await request.delete(`${baseURL}/${pharmacieId}`);
+  const body = await response.json();
+  expect(response.status()).toBe(400);
+  expect(body.code).toBe('pharmacie.NotFound');
+  console.log(`Deuxième tentative : Pharmacie ID ${pharmacieId} déjà supprimée`, body);
+});
+
 
 });

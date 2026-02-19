@@ -10,7 +10,7 @@ npm
 
 Git
 
-Vérification :
+Vérification :
 
 node -v
 npm -v
@@ -21,10 +21,14 @@ git clone https://github.com/<your-username>/playwright-cucumber-starter.git
 cd playwright-cucumber-starter
 
 ⚙️ Installation
-Installer les dépendances
+
+Installer les dépendances :
+
 npm install
 
-Installer les navigateurs Playwright
+
+Installer les navigateurs Playwright :
+
 npx playwright install
 
 🧪 Exécuter les tests (BDD)
@@ -32,12 +36,25 @@ npm run cucumber
 
 
 ✔️ Exécute les fichiers .feature
+
 ✔️ Lance Playwright
+
 ✔️ Génère les rapports automatiquement
+
+⚡ Exécuter les tests Playwright directement
+
+Si tu veux lancer les tests Playwright directement (sans Cucumber) et générer un rapport HTML :
+
+npx playwright test --reporter=html
+
+
+Pour ouvrir le rapport HTML après l’exécution :
+
+npx playwright show-report
 
 📊 Rapports de test
 
-Après l’exécution :
+Après l’exécution des tests :
 
 reports/
  ├─ cucumber-report.html
@@ -74,25 +91,6 @@ playwright-cucumber-starter/
 Commande	Description
 npm run cucumber	Exécuter les tests BDD
 npm run test	❌ Non utilisé
-npx playwright install	Installer navigateurs
-🔄 CI / CD (à venir)
-
-Ce projet est prêt pour une intégration CI/CD :
-
-GitHub Actions
-
-GitLab CI
-
-Jenkins
-
-Les rapports peuvent être archivés comme artifacts.
-
-🧠 Notes
-
-Framework : Playwright + Cucumber.js
-
-Langage : TypeScript
-
-Rapports : HTML / JSON
-
-OS supportés : Windows / Linux / macOS
+npx playwright install	Installer les navigateurs Playwright
+npx playwright test --reporter=html	Exécuter les tests Playwright avec rapport HTML
+npx playwright show-report	Ouvrir le dernier rapport HTML Playwright

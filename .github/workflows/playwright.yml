@@ -30,11 +30,23 @@ jobs:
         env:
           CI: true
 
-      - name: Copy Cucumber HTML report to GitHub Pages folder
+      - name: Run Playwright tests with HTML reporter
+        run: npx playwright test --reporter=html
+        env:
+          CI: true
+
+      - name: Copy Playwright HTML report to docs folder
         if: always()
         run: |
           mkdir -p docs
-          cp reports/cucumber-report.html docs/
+          cp -r playwright-report/* docs/
+
+      - name: Upload Playwright HTML report as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-html-report
+          path: playwright-report/
 
       - name: Upload Cucumber HTML report as artifact
         if: always()
