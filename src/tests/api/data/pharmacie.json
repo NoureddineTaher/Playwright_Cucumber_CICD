@@ -2,16 +2,16 @@
   
   "dateFrom": "01/03/2026",
   "dateTo": "05/03/2026",
-  "lieu": "Sartrouville",
-  "pharmacieName": "Ntaher",
-  "adress2": "2 rue suger",
-  "tel": "0745313152"
+  "lieu": "Tunisie",
+  "pharmacieName": "Pharmacie Chifaa",
+  "adress2": "Benguerdene 4160",
+  "tel": "75711022"
 },
  {
         "dateFrom": "02/03/2026",
         "dateTo": "06/03/2026",
-        "lieu": "Paris",
-        "pharmacieName": "Ntaher Modifiée",
-        "adress2": "10 rue Nouvelle",
+        "lieu": "Tunisie",
+        "pharmacieName": "Pharmacie route medenine",
+        "adress2": "Benguerdane 4163",
         "tel": "23784755"
       }]
