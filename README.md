@@ -90,7 +90,7 @@ playwright-cucumber-starter/
 📜 Scripts npm
 Commande	Description
 npm run cucumber	Exécuter les tests BDD
-npm run test	❌ Non utilisé
+npm run test	
 npx playwright install	Installer les navigateurs Playwright
 npx playwright test --reporter=html	Exécuter les tests Playwright avec rapport HTML
 npx playwright show-report	Ouvrir le dernier rapport HTML Playwright
